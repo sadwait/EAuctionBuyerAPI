@@ -3,6 +3,7 @@ using Microsoft.Azure.Cosmos;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Azure.Documents.Client;
 
 namespace AccountsAPI.Repositories
 {
@@ -13,24 +14,21 @@ namespace AccountsAPI.Repositories
         {
             container = client.GetContainer(databaseName, containerName);
         }
-        public async Task AddProduct(Buyer product)
-        {
-            await container.CreateItemAsync(product, new PartitionKey(product.ProductId));
-        }
 
-        public async Task DeleteProduct(string productId)
+        public async Task<List<Buyer>> GetAllBuyers()
         {
-            await container.DeleteItemAsync<Buyer>(productId, new PartitionKey(productId));
-        }
-
-        public async Task<Buyer> GetProduct(string productId)
-        {
-            // var response=   await container.ReadItemAsync<Product>("863ab1c4-5385-499f-b78e-183c9874ea1f", new PartitionKey(productId));
-            //  return response.Resource;
-
             IQueryable<Buyer> queryable = container.GetItemLinqQueryable<Buyer>(true);
-            queryable = queryable.Where(item => item.ProductId == productId);
-            return await Task.FromResult(queryable.ToArray().FirstOrDefault());
+            return await Task.FromResult(queryable.ToList());
+        }
+
+        public async Task PlaceBid(Buyer buyer)
+        {
+            await container.CreateItemAsync(buyer, new PartitionKey(buyer.Id));
+        }
+
+        public async Task UpdateBid(Buyer buyer)
+        {
+            await container.UpsertItemAsync(buyer, new PartitionKey(buyer.Id));
         }
     }
 }

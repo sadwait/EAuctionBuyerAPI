@@ -1,5 +1,7 @@
 ﻿using AccountsAPI.Models;
 using AccountsAPI.Repositories;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AccountsAPI.Services
@@ -7,23 +9,31 @@ namespace AccountsAPI.Services
     public class BuyerService : IBuyerService
     {
         private readonly IBuyerRepository _repository;
-        public BuyerService(IBuyerRepository productRepository)
+        public BuyerService(IBuyerRepository buyerRepository)
         {
-            _repository = productRepository;
-        }
-        public async Task AddProduct(Buyer product)
-        {
-            await _repository.AddProduct(product);
+            _repository = buyerRepository;
         }
 
-        public async Task DeleteProduct(string productId)
+        public async Task PlaceBid(Buyer buyer)
         {
-            await _repository.DeleteProduct(productId);
+            buyer.Id = Guid.NewGuid().ToString();
+            await _repository.PlaceBid(buyer);
         }
 
-        public Task<Buyer> GetProduct(string productId)
+        public async Task UpdateBid(string productId, string email, double amount)
         {
-            return _repository.GetProduct(productId);
+            Buyer buyer = new Buyer();
+            var buyersList = await _repository.GetAllBuyers();
+            if (buyersList != null && buyersList.Count > 0)
+            {
+                buyer = buyersList.Where(x => x.ProductId == productId && x.Email == email).FirstOrDefault();
+                if (buyer != null)
+                {
+                    buyer.BidAmount = amount;
+                }
+            }
+
+            await _repository.UpdateBid(buyer);
         }
     }
 }

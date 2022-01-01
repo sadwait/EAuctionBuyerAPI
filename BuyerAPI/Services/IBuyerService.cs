@@ -5,8 +5,8 @@ namespace AccountsAPI.Services
 {
     public interface IBuyerService
     {
-        Task<Buyer> GetProduct(string productId);
-        Task AddProduct(Buyer product);
-        Task DeleteProduct(string productId);
+        Task PlaceBid(Buyer buyer);
+
+        Task UpdateBid(string productId, string email, double amount);
     }
 }

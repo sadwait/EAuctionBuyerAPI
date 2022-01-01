@@ -1,44 +1,33 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+﻿using AccountsAPI.Models;
+using AccountsAPI.Services;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace AccountsAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("e-auction/api/v1/[controller]")]
     [ApiController]
     public class BuyerController : ControllerBase
     {
-        // GET: api/<AccountsController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly IBuyerService _buyerService;
+        public BuyerController(IBuyerService buyerService)
         {
-            return new string[] { "value1", "value2" };
+            _buyerService = buyerService;
         }
 
-        // GET api/<AccountsController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<AccountsController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        [Route("place-bid")]
+        public async Task<IActionResult> Post([FromBody] Buyer buyer)
         {
+            await _buyerService.PlaceBid(buyer);
+            return Created("place-bid", buyer);
         }
-
-        // PUT api/<AccountsController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        
+        [HttpPut]
+        [Route("{productId}/{buyerEmailld}/{newBidAmount}")]
+        public void Put(string productId,string buyerEmailld, double newBidAmount)
         {
-        }
-
-        // DELETE api/<AccountsController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            _buyerService.UpdateBid(productId, buyerEmailld, newBidAmount);
         }
     }
 }
