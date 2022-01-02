@@ -37,7 +37,7 @@ namespace AccountsAPI.Repositories
         {
             IQueryable<ProductInfo> queryable = productContainer.GetItemLinqQueryable<ProductInfo>(true);
             queryable = queryable.Where(item => item.Id == productId);
-            return await Task.FromResult(queryable.FirstOrDefault());
+            return await Task.FromResult(queryable.ToList().FirstOrDefault());
         }
     }
 }

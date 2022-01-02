@@ -37,6 +37,7 @@ namespace AccountsAPI
 
             //services.AddScoped<IBuyerService, BuyerService>();
             //services.AddSingleton<IBuyerRepository>(InitializeCosmosClientIntance(Configuration.GetSection("CosmosDb")).GetAwaiter().GetResult());
+            services.AddCors(c => { c.AddPolicy("AllowOrigin", option => option.AllowAnyOrigin()); }) ;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,6 +53,7 @@ namespace AccountsAPI
             app.UseRouting();
 
             app.UseAuthorization();
+            app.UseCors(cors=>cors.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
             app.UseEndpoints(endpoints =>
             {
