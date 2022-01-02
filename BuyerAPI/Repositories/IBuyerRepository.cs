@@ -1,4 +1,5 @@
 ﻿using AccountsAPI.Models;
+using BuyerAPI.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -11,5 +12,7 @@ namespace AccountsAPI.Repositories
         Task PlaceBid(Buyer buyer);
 
         Task UpdateBid(Buyer buyer);
+
+        Task<ProductInfo> GetProductById(string productId);
     }
 }
