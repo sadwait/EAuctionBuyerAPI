@@ -2,10 +2,8 @@ name: Build a Docker image and Push it to ACR
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -21,5 +19,5 @@ jobs:
           password: ${{ secrets.ACR_PASSWORD }}
 
       - run: |
-          docker build . -t eauctioncontainer.azurecr.io/appdb:${{ github.sha }}
+          docker build ./BuyerAPI -t eauctioncontainer.azurecr.io/appdb:${{ github.sha }}
           docker push eauctioncontainer.azurecr.io/appdb:${{ github.sha }}
