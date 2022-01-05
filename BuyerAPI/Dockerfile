@@ -6,10 +6,10 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
-COPY ["BuyerAPI/BuyerAPI.csproj", "BuyerAPI/"]
-RUN dotnet restore "BuyerAPI/BuyerAPI.csproj"
+COPY ["BuyerAPI.csproj", "./"]
+RUN dotnet restore "./BuyerAPI.csproj"
 COPY . .
-WORKDIR "/src/BuyerAPI"
+WORKDIR "/src/."
 RUN dotnet build "BuyerAPI.csproj" -c Release -o /app/build
 
 FROM build AS publish
