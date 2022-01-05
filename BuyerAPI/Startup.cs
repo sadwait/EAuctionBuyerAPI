@@ -12,6 +12,7 @@ using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace AccountsAPI
@@ -68,7 +69,24 @@ namespace AccountsAPI
             var databaseName = configurationSection["DatabaseName"];
             var containerName = configurationSection["ContainerName"];
 
-            var cosmosClient = new CosmosClient(account, key);
+            CosmosClientOptions cosmosClientOptions = new CosmosClientOptions()
+            {
+                HttpClientFactory = () =>
+                {
+                    HttpMessageHandler httpMessageHandler = new HttpClientHandler()
+                    {
+                        ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                    };
+
+                    return new HttpClient(httpMessageHandler);
+                },
+                ConnectionMode = ConnectionMode.Gateway
+            };
+
+            var cosmosClient = new CosmosClient(account, key, cosmosClientOptions);
+
+            //var cosmosClient = new CosmosClient(account, key);
+
             var db = await cosmosClient.CreateDatabaseIfNotExistsAsync(databaseName);
             await db.Database.CreateContainerIfNotExistsAsync(containerName, "/id");
             var buyerRepository = new BuyerRepository(cosmosClient, databaseName, containerName);
