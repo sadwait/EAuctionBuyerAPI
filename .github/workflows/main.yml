@@ -19,5 +19,5 @@ jobs:
           password: ${{ secrets.ACR_PASSWORD }}
 
       - run: |
-          docker build ./BuyerAPI -t eauctioncontainer.azurecr.io/appdb:${{ github.sha }}
-          docker push eauctioncontainer.azurecr.io/appdb:${{ github.sha }}
+          docker build -t eauctioncontainer.azurecr.io/buyerapi:${{ github.sha }} .
+          docker push eauctioncontainer.azurecr.io/buyerapi:${{ github.sha }}
