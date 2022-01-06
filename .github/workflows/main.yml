@@ -21,29 +21,3 @@ jobs:
       - run: |
           docker build -t eauctioncontainer.azurecr.io/buyerapi:${{ github.sha }} ./BuyerAPI
           docker push eauctioncontainer.azurecr.io/buyerapi:${{ github.sha }}
-
-      - name: Create secret in Kubernetes cluster
-        uses: Azure/k8s-create-secret@v1.1
-        with:         
-          container-registry-url: eauctioncontainer.azurecr.io         
-          container-registry-username: ${{ secrets.ACR_USERNAME }}         
-          container-registry-password:  ${{ secrets.ACR_PASSWORD }}
-          # Type of Kubernetes secret. For example, docker-registry or generic
-          secret-type: docker-registry
-          # Name of the secret. You can use this secret name in the Kubernetes YAML configuration file.
-          secret-name: docker-image-pull-secret
-          
-        # Deploy to k8s cluster
-      - name: Deploy to Kubernetes cluster
-        uses: Azure/k8s-deploy@v1
-        with:        
-          # Path to the manifest files which will be used for deployment.
-          manifests: |
-            k8s/deployment.yml
-            k8s/service.yml
-          # Fully qualified resource URL of the image(s) to be used for substitutions on the manifest files Example: contosodemo.azurecr.io/helloworld:test
-          images: 'eauctioncontainer.azurecr.io/buyerapi:${{ github.sha }}'
-          # Name of a docker-registry secret that has already been set up within the cluster. Each of these secret names are added under imagePullSecrets field for the workloads found in the input manifest files
-          imagepullsecrets: docker-image-pull-secret
-          # deploy/promote/reject
-          action: deploy
