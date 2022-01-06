@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: aks-eauctionbuyerservice
+spec:
+  selector:
+    app: aks-eauctionbuyercluster
+  type: LoadBalancer
+  ports:
+  - port: 8080
+    targetPort: 80

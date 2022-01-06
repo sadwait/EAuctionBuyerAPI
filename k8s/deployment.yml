@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aks-eauctionbuyercluster
+spec:
+  selector:
+    matchLabels:
+      app: aks-eauctionbuyercluster
+  template:
+    metadata:
+      labels:
+        app: aks-eauctionbuyercluster
+    spec:
+      containers:
+      - name: aks-eauctionbuyercluster
+        image: eauctioncontainer.azurecr.io/buyerapi
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
