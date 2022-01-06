@@ -28,7 +28,7 @@ jobs:
           # Azure credentials i.e. output of `az ad sp create-for-rbac --sdk-auth`
           creds: '${{ secrets.AZURE_CREDENTIALS }}' 
           # Resource Group Name
-          resource-group: eauctioncontainer 
+          resource-group: FSE3_589410_ResourceGroup 
           # AKS Cluster Name
           cluster-name: eauctionbuyercluster
 
