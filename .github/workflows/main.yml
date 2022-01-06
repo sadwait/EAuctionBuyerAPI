@@ -21,7 +21,17 @@ jobs:
       - run: |
           docker build -t eauctioncontainer.azurecr.io/buyerapi:${{ github.sha }} ./BuyerAPI
           docker push eauctioncontainer.azurecr.io/buyerapi:${{ github.sha }}
-      
+            
+      - name: Azure Kubernetes set context
+        uses: Azure/aks-set-context@v1.1
+        with:
+          # Azure credentials i.e. output of `az ad sp create-for-rbac --sdk-auth`
+          creds: '${{ secrets.AZURE_CREDENTIALS }}' 
+          # Resource Group Name
+          resource-group: eauctioncontainer 
+          # AKS Cluster Name
+          cluster-name: eauctionbuyercluster
+
       - name: Create secret in Kubernetes cluster
         uses: Azure/k8s-create-secret@v1.1
         with:         
