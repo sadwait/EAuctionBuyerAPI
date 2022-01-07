@@ -1,5 +1,6 @@
 using AccountsAPI.Repositories;
 using AccountsAPI.Services;
+using BuyerAPI.MessageBroker;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using RabbitMQ.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,8 +38,22 @@ namespace AccountsAPI
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "AccountsAPI", Version = "v1" });
             });
 
-            //services.AddScoped<IBuyerService, BuyerService>();
-            //services.AddSingleton<IBuyerRepository>(InitializeCosmosClientIntance(Configuration.GetSection("CosmosDb")).GetAwaiter().GetResult());
+            services.AddScoped<IRabbitMqProducer, RabbitMqProducer>();
+
+            services.AddSingleton(service => {
+                var _config = Configuration.GetSection("RabbitMQ");
+                return new ConnectionFactory()
+                {
+                    HostName = _config["HostName"],
+                    UserName = _config["UserName"],
+                    Password = _config["Password"],
+                    Port = Convert.ToInt32(_config["Port"]),
+                    VirtualHost = _config["VirtualHost"],
+                };
+            });
+
+            services.AddScoped<IBuyerService, BuyerService>();
+            services.AddSingleton<IBuyerRepository>(InitializeCosmosClientIntance(Configuration.GetSection("CosmosDb")).GetAwaiter().GetResult());
             services.AddCors(c => { c.AddPolicy("AllowOrigin", option => option.AllowAnyOrigin()); }) ;
         }
 
@@ -84,9 +100,6 @@ namespace AccountsAPI
             };
 
             var cosmosClient = new CosmosClient(account, key, cosmosClientOptions);
-
-            //var cosmosClient = new CosmosClient(account, key);
-
             var db = await cosmosClient.CreateDatabaseIfNotExistsAsync(databaseName);
             await db.Database.CreateContainerIfNotExistsAsync(containerName, "/id");
             var buyerRepository = new BuyerRepository(cosmosClient, databaseName, containerName);

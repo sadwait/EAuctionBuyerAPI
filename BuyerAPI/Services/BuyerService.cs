@@ -1,5 +1,6 @@
 ﻿using AccountsAPI.Models;
 using AccountsAPI.Repositories;
+using BuyerAPI.MessageBroker;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,9 +10,11 @@ namespace AccountsAPI.Services
     public class BuyerService : IBuyerService
     {
         private readonly IBuyerRepository _repository;
-        public BuyerService(IBuyerRepository buyerRepository)
+        private readonly IRabbitMqProducer _rabbitMqProducer;
+        public BuyerService(IBuyerRepository buyerRepository, IRabbitMqProducer rabbitMqProducer)
         {
             _repository = buyerRepository;
+            _rabbitMqProducer = rabbitMqProducer;
         }
 
         public async Task PlaceBid(Buyer buyer)
@@ -33,6 +36,9 @@ namespace AccountsAPI.Services
 
             buyer.Id = Guid.NewGuid().ToString();
             await _repository.PlaceBid(buyer);
+
+            //Add message to RabbitMq
+            _rabbitMqProducer.Publish(String.Format("New bid placed by {0} {1}", buyer.FirstName, buyer.LastName));
         }
 
         public async Task UpdateBid(string productId, string email, double amount)
