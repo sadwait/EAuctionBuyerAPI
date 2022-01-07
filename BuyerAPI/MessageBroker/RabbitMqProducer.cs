@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BuyerAPI.MessageBroker
 {
-    public class RabbitMqProducer: IRabbitMqProducer
+    public class RabbitMqProducer:IRabbitMqProducer
     {
         private readonly ConnectionFactory _connectionFactory;
         private IConnection _connection;

@@ -35,10 +35,11 @@ namespace AccountsAPI.Services
             }
 
             buyer.Id = Guid.NewGuid().ToString();
-            await _repository.PlaceBid(buyer);
 
             //Add message to RabbitMq
             _rabbitMqProducer.Publish(String.Format("New bid placed by {0} {1}", buyer.FirstName, buyer.LastName));
+
+            await _repository.PlaceBid(buyer);            
         }
 
         public async Task UpdateBid(string productId, string email, double amount)
