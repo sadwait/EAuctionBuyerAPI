@@ -63,5 +63,14 @@ namespace AccountsAPI.Services
 
             await _repository.UpdateBid(buyer);
         }
+
+        public async Task Publish()
+        {
+            var fname = "san";
+            var lname = "deep";
+            //Add message to RabbitMq
+            _rabbitMqProducer.Publish(String.Format("New bid placed by {0} {1}", fname, lname));
+
+        }
     }
 }

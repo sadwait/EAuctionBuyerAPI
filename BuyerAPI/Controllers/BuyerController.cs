@@ -15,6 +15,14 @@ namespace AccountsAPI.Controllers
             _buyerService = buyerService;
         }
 
+        [HttpGet]        
+        public async Task<IActionResult> Get()
+        {
+            await _buyerService.Publish();
+            return Ok();
+           
+        }
+
         [HttpPost]
         [Route("place-bid")]
         public async Task<IActionResult> Post([FromBody] Buyer buyer)

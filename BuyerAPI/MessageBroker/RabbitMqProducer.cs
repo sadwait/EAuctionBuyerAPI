@@ -12,6 +12,7 @@ namespace BuyerAPI.MessageBroker
         private readonly ConnectionFactory _connectionFactory;
         private IConnection _connection;
         private IModel channel;
+        private string exchangeName = "BidQueue";
 
         public RabbitMqProducer(ConnectionFactory connectionFactory)
         {
@@ -28,7 +29,7 @@ namespace BuyerAPI.MessageBroker
             {
                 channel = _connection.CreateModel();
 
-                channel.QueueDeclare(queue: "hello",
+                channel.QueueDeclare(queue: exchangeName,
                                   durable: false,
                                   exclusive: false,
                                   autoDelete: false,
@@ -38,12 +39,19 @@ namespace BuyerAPI.MessageBroker
 
         public void Publish(string message)
         {
-            var body = Encoding.UTF8.GetBytes(message);
+            try
+            {
+                var body = Encoding.UTF8.GetBytes(message);
 
-            channel.BasicPublish(exchange: "",
-                                 routingKey: "hello",
-                                 basicProperties: null,
-                                 body: body);
+                channel.BasicPublish(exchange: "",
+                                     routingKey: exchangeName,
+                                     basicProperties: null,
+                                     body: body);
+            }
+            catch(Exception ex)
+            { 
+            }
+            
         }
     }
 }
