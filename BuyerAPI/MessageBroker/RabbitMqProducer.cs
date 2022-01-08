@@ -39,19 +39,12 @@ namespace BuyerAPI.MessageBroker
 
         public void Publish(string message)
         {
-            try
-            {
-                var body = Encoding.UTF8.GetBytes(message);
+            var body = Encoding.UTF8.GetBytes(message);
 
-                channel.BasicPublish(exchange: "",
-                                     routingKey: exchangeName,
-                                     basicProperties: null,
-                                     body: body);
-            }
-            catch(Exception ex)
-            { 
-            }
-            
+            channel.BasicPublish(exchange: "",
+                                 routingKey: exchangeName,
+                                 basicProperties: null,
+                                 body: body);
         }
     }
 }
