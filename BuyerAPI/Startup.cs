@@ -35,7 +35,7 @@ namespace AccountsAPI
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "AccountsAPI", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "BuyerAPI", Version = "v1" });
             });
 
             services.AddScoped<IRabbitMqProducer, RabbitMqProducer>();
@@ -62,10 +62,11 @@ namespace AccountsAPI
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "AccountsAPI v1"));
+                app.UseDeveloperExceptionPage();                
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "BuyerAPI v1"));
 
             app.UseRouting();
 
