@@ -32,7 +32,7 @@ namespace AccountsAPI.Controllers
         }
         
         [HttpPut]
-        [Route("{productId}/{buyerEmailld}/{newBidAmount}")]
+        [Route("update-bid/{productId}/{buyerEmailld}/{newBidAmount}")]
         public async Task Put(string productId,string buyerEmailld, double newBidAmount)
         {
             await _buyerService.UpdateBid(productId, buyerEmailld, newBidAmount);
